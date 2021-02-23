@@ -12,7 +12,7 @@ class Counter:
 		self.selected_motifs = []
 		self.descriptor2motifs = {}
 		
-	def first_count(self):	
+	def first_count(self):
 		motif2descriptor = {}
 		for motif in self.motifs:
 			g1 = self.g.subgraph(motif)
@@ -40,7 +40,7 @@ class Counter:
 				
 			labels = sorted([v for k, v in labels_map.items()])
 
-			descriptor = ''			
+			descriptor = ''
 			for l in labels:
 				string_l = '_'.join([str(value) for value in l]) + '_' 
 				descriptor += string_l
@@ -49,8 +49,7 @@ class Counter:
 			
 			if descriptor not in self.descriptor2motifs:
 				self.descriptor2motifs[descriptor] = []
-			self.descriptor2motifs[descriptor] += [motif]	
-	
+			self.descriptor2motifs[descriptor] += [motif]
 		#keep only motifs that meet the threshold
 		keys = list(self.descriptor2motifs.keys())
 		for descriptor in keys:
@@ -75,11 +74,10 @@ class Counter:
 		return attributes_n1 == attributes_n2
 
 	def check_real_isomorphisms(self):
-		iso = {}		
-		key_generator = 0
+		iso = {}
+		key_generator = 0     
 		for descriptor in self.descriptor2motifs:
 			for motif in self.descriptor2motifs[descriptor]:
-				
 				if type == 'direct':
 					g1 = nx.DiGraph()
 				else:
@@ -95,16 +93,19 @@ class Counter:
 					if type == 'direct':
 						f_iso = self.isomorphism_directed(iso[k][0], g1)
 					else:
-						f_iso = self.isomorphism_undirect(iso[k][0], g1)						
+						f_iso = self.isomorphism_undirect(iso[k][0], g1)
 					if f_iso:
 						iso[k] += [g1]
 						break
-				
 				if not f_iso:
-					iso[key_generator] = [g1]
-					key_generator += 1	
-		self.selected_motifs = set([tuple(x.nodes()) for k,v in iso.items() for x in v if len(v) >= self.th])
-
+					iso[descriptor+'_'+str(key_generator)] = [g1]
+					key_generator += 1     
+		self.selected_motifs = dict()
+		names =  list(self.descriptor2motifs.keys())[0].split('_')    
+		name = names[0]+ '_' + names[1]
+		motifs = ([tuple(x.nodes()) for k,v in iso.items() for x in v if len(v) >= self.th])
+		self.selected_motifs[name] = motifs  
+        
 	def get_selected_motifs(self):
 		return self.selected_motifs
 		

@@ -49,30 +49,10 @@ class Manager:
 		else:
 			i = 1
 			while i < len(self.argv):
-				if self.argv[i] == '--edges-file' or self.argv[i] == '-e':
-					if os.path.exists(self.argv[i + 1]):
-						self.edges_file = self.argv[i + 1]
-						i += 2
-					else:
-						print('ERROR The file ' + self.argv[i + 1] + ' does not exist')
-						sys.exit(1)
-						
-				elif self.argv[i] == '--nodes-file' or self.argv[i] == '-n':
-					if os.path.exists(self.argv[i + 1]):
-						self.nodes_file = self.argv[i + 1]
-						i += 2
-					else:
-						print('ERROR The file ' + self.argv[i + 1] + ' does not exist')
-						sys.exit(1)
-						
-				elif self.argv[i] == '--type-of-network' or self.argv[i] == '-tn':
-					if self.argv[i + 1] in ['direct', 'undirect']:
-						self.type_of_network = self.argv[i + 1]
-						i += 2
-					else:
-						print("ERROR <type>: # " + str(self.argv[i + 1]) + " # Network can only be direct or indirect Please see: python supernoder.py --help")		
-						sys.exit(1)
-					
+				if self.argv[i] == '--graph' or self.argv[i] == '-g':
+					self.g=self.argv[i+1]
+					i += 2
+					self.type_of_network = 'direct' if nx.is_directed(self.g) else 'undirect'
 				elif self.argv[i] == '--threshold' or self.argv[i] == '-th':
 					try:
 						self.th = int(self.argv[i + 1])
@@ -123,11 +103,7 @@ class Manager:
 				elif self.argv[i] == '--help' or self.argv[i] == '-h':
 					print("\n#####################################\nRelease 1.0 SUPERNODER\n")
 					print("Usage: python xproject -t <input_text> \n LIST OF PARAMS:\n" \
-					" -n,  --nodes-file \t\t<filename> \tMANDATORY \tThe list of nodes. Node id and label for each row separated by a space\n" \
-					" -e,  --edges-file \t\t<filename> \tMANDATORY \tThe list of edges. One edge for each row.\n" \
-					" -m,  --method \t\t\t<method> \tOPTIONAL \tThe heuristic to use in order to maximize motifs. DEFAULT: 3\n" \
-					" -tn, --type-of-network \t<type> \t\tOPTIONAL 	The type of network. It can be chosen from [direct, undirect]. DEFAULT: direct.\n" \
-					" -nr, --number-of-repetitions\t<number> \tOPTIONAL \tThe number of repetitions to build hierarchical levels. DEFAULT: 1\n" \
+					" -g,  --graphs \t\t<filename> \tMANDATORY \tthe networkx graph\n" \
 					" -th, --threshold \t\t<threshold> \tOPTIONAL \tThe threshold to hold over-represented motifs.\n" \
 					" -ms, --motif-size \t\t<size> \t\tOPTIONAL \tThe size of motifs. It must be greater or equal to 3. DEFAULT: 3.\n"\
 					" -h1tr, --h1-times-repetition \t<times> \tOPTIONAL \tThe number of repetition of h1. DEFAULT: 1.\n" \
@@ -139,40 +115,9 @@ class Manager:
 		
 	
 	def __load_graph(self):	
-		print ('# ' + (str(datetime.datetime.now()) + ' Loading graph'))
-		if self.type_of_network == 'direct':
-			self.g = nx.DiGraph()	
-		elif self.type_of_network == 'undirect':
-			self.g = nx.Graph()	
-		try:							
-			with open(self.nodes_file, 'r') as f:
-				lines = f.read().splitlines()
-				for line in lines:
-					values = line.split(' ')
-					if len(values) == 2:
-						self.g.add_node(values[0], label=values[1])
-					elif len(values) > 2 or len(values) == 1:
-						print('nodes are not well formatted')
-						raise ValueError('nodes are not well formatted')
-			nodes_set = set(self.g.nodes())
-			with open(self.edges_file, 'r') as f:
-				lines = f.read().splitlines()
-				for line in lines:
-					values = line.split(' ')
-					if len(values) == 2 and values[0] in nodes_set and values[1] in nodes_set:
-						self.g.add_edge(values[0], values[1])
-					elif len(values) > 2 or len(values) == 1:
-						print('edges are not well formatted')
-						raise ValueError('edges are not well formatted') 
-			
-			print ('#\tThe original network has ', len(self.g.edges()), ' nodes and ', len(self.g.edges()), ' edges')
-		except:
-			traceback.print_exc(file=sys.stdout)
-			print("ERROR: nodes file or edges file is missing")
-			sys.exit(1)
-					
+			print ('#\tThe original network has ', len(self.g.nodes()), ' nodes and ', len(self.g.edges()), ' edges')
 	def __compile_node2motifs(self):
-		self.node2motifs = {}
+		self.node2motifs = {}  
 		for motif_name in self.motifs:
 			self.node2motifs[motif_name] ={}
 			for motif in self.motifs[motif_name]:
@@ -205,30 +150,29 @@ class Manager:
 		self.disjoint_motif_finder = DisjointMotifsFinder(self.g, self.motifs, self.motif2edges, self.sample_size, self.node2motifs, self.h1_times_repetitions)
 		self.disjoint_motif_finder.run(self.method)
 		self.disjoint_motifs = self.disjoint_motif_finder.get_disjoint_motifs()
-		print('#\tThe number of disjoint motifs is ', len(self.disjoint_motifs))
+		#print('#\tThe number of disjoint motifs is ', len([x for k,v in self.disjoint_motifs.items() for x in v]))
 
-	def __cut(self): #тут подсчитываем именно отдельные мотивы,
+	def __cut(self):
 		print ('# ' + str(datetime.datetime.now()) + ' Threshold computation')
 		self.counter = Counter(self.g, self.motifs, self.th, self.type_of_network, self.motif2edges)
 		self.counter.run()
 		self.motifs = self.counter.get_selected_motifs()
-		print ('#\tThe number of motifs that occur more than', self.th, 'times is', len(self.motifs))
+		#print ('#\tThe number of motifs that occur more than', self.th, 'times is', len([x for k,v in self.motifs.items() for x in v]))
 
-		
 	def run(self):
 		self.__manage_input()
 		self.__load_graph()
 		self.__do_enumeration()
 		self.__cut()
-		self.__compile_node2motifs()
-		self.__find_disjoint_motifs()
-		distribution_disjoint =dict()
+		self.__compile_node2motifs()     
 		distribution_f1 = dict()
-		for motif_name in self.disjoint_motifs:
-			distribution_disjoint[motif_name]=len(self.disjoint_motifs[motif_name])
 		for motif_name in self.motifs:
 			distribution_f1[motif_name] = len(self.motifs[motif_name])
+		return distribution_f1
+	def disjoint_finder(self):
+		self.__find_disjoint_motifs()
+		distribution_disjoint =dict()
+		for motif_name in self.disjoint_motifs:
+			distribution_disjoint[motif_name]=len(self.disjoint_motifs[motif_name])
 		print ('SuperNoder execution has finished\n')
-		return distribution_disjoint, distribution_f1
-
-		
+		return distribution_disjoint

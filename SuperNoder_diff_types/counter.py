@@ -12,7 +12,7 @@ class Counter:
 		self.selected_motifs = []
 		self.descriptor2motifs = {}
 		
-	def first_count(self):	
+	def first_count(self):         
 		motif2descriptor = {}
 		for motif in self.motifs:
 			g1 = self.g.subgraph(motif)
@@ -24,7 +24,7 @@ class Counter:
 			labels_map = {}
 			for node in motif:
 				label = self.g.nodes[node]['label']#node2label[node]	
-				if self.type == 'undirect':
+				if self.type == 'undirect':            
 					d = g1.degree[node]
 					if label not in labels_map:
 						labels_map[label] = (label, 1, d)
@@ -40,7 +40,7 @@ class Counter:
 				
 			labels = sorted([v for k, v in labels_map.items()])
 
-			descriptor = ''			
+			descriptor = ''
 			for l in labels:
 				string_l = '_'.join([str(value) for value in l]) + '_' 
 				descriptor += string_l
@@ -104,7 +104,6 @@ class Counter:
 					for node in g1:
 						h.append(g1.degree(node))
 					iso[descriptor+'_'+str(sorted(h))] = [g1]
-
 		self.selected_motifs = dict()
 		for key,v in iso.items():
 			if key not in self.selected_motifs:
