@@ -1,4 +1,4 @@
-from SuperNoder_diff_types.support_functions import Utils
+from SuperNoder_diff_types.support_functions import *
 from networkx.algorithms import isomorphism
 import networkx as nx
 
@@ -59,8 +59,6 @@ class Counter:
 			else:
 				self.descriptor2motifs.pop(descriptor, None)
 
-			
-		
 	#This function is used to compute the isomorphism between two undirect graphs.
 	def isomorphism_undirect(self, g1, g2):	
 		matcher = isomorphism.GraphMatcher(g1, g2, node_match = self.__node_equals)	
@@ -108,7 +106,6 @@ class Counter:
 		for key,v in iso.items():
 			if key not in self.selected_motifs:
 				self.selected_motifs[key]=([tuple(x.nodes()) for x in v if len(v) >= self.th])
-			#set([tuple(x.nodes()) for k,v in iso.items() for x in v if len(v) >= self.th])
 
 	def get_selected_motifs(self):
 		return self.selected_motifs

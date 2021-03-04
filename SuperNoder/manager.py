@@ -8,10 +8,6 @@ import traceback
 from SuperNoder.enumerator import *
 from SuperNoder.disjoint_motifs_finder import *
 from SuperNoder.counter import *
-import multiprocessing as mp
-p = mp.Pool(mp.cpu_count())
-parellel = True # change to True to compute in parallel
-chunksize = 25 # vary this value to speedup parallel computation
 
 class Manager:
 	TOOL_NAME = 'SUPERNODER 1.0'
@@ -28,7 +24,7 @@ class Manager:
 		self.nodes_file = None
 		self.type_of_network = 'direct'
 		self.method = 'h1'
-		self.motifs = dict()
+		self.motifs = set()
 		self.motif2edges = {}
 		self.motifs_size = 3
 		self.th = 50
@@ -46,7 +42,6 @@ class Manager:
 		
 		
 	def __manage_input(self):
-		print('\n' + ' Reading input')
 		if len(self.argv) <= 1:
 			print("No param has been provided. Please see: python supernoder.py --help")
 			sys.exit(1)
@@ -120,7 +115,7 @@ class Manager:
 		
 	
 	def __load_graph(self):	
-			print ('#\tThe original network has ', len(self.g.nodes()), ' nodes and ', len(self.g.edges()), ' edges')
+			pass#print ('#\tThe original network has ', len(self.g.nodes()), ' nodes and ', len(self.g.edges()), ' edges')
 	def __compile_node2motifs(self):
 		self.node2motifs = {}   
 		for motif_name in self.motifs:
@@ -136,9 +131,7 @@ class Manager:
 			#	self.node2motifs[n].add(motif)
 		
 	def	__do_enumeration(self):
-		print('# ' + str(datetime.datetime.now()) + ' Enumeration')
 		self.motifs = Utils.enumerate_motifs(self.g, self.motifs_size) 
-		print ('#\tThe total number of motifs is ', len(self.motifs))
 		self.motif2edges = {}
 		for motif in self.motifs:
 			if motif not in self.motif2edges:
@@ -154,14 +147,12 @@ class Manager:
 						self.motif2edges[motif].add(v)
                         
 	def __find_disjoint_motifs(self): 
-		print ('# ' + str(datetime.datetime.now()) + ' Disjointness computation')
 		self.disjoint_motif_finder = DisjointMotifsFinder(self.g, self.motifs, self.motif2edges, self.sample_size, self.node2motifs, self.h1_times_repetitions)
 		self.disjoint_motif_finder.run(self.method)
 		self.disjoint_motifs = self.disjoint_motif_finder.get_disjoint_motifs()
 		#print('#\tThe number of disjoint motifs is ',len([x for k,v in self.disjoint_motifs.items() for x in v]))
 
 	def __cut(self):
-		print ('# ' + str(datetime.datetime.now()) + ' Threshold computation')
 		self.counter = Counter(self.g, self.motifs, self.th, self.type_of_network, self.motif2edges)
 		self.counter.run() 
 		self.motifs = self.counter.get_selected_motifs()
@@ -182,5 +173,4 @@ class Manager:
 		distribution_disjoint =dict()
 		for motif_name in self.disjoint_motifs:
 			distribution_disjoint[motif_name]=len(self.disjoint_motifs[motif_name])
-		print ('SuperNoder execution has finished\n')
 		return distribution_disjoint

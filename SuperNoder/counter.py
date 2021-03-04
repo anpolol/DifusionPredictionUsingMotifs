@@ -14,51 +14,52 @@ class Counter:
 		
 	def first_count(self):
 		motif2descriptor = {}
-		for motif in self.motifs:
-			g1 = self.g.subgraph(motif)
-			g1 = nx.DiGraph(g1.edges())
-			if self.type == 'undirect':
-				g1 = nx.Graph(g1.edges())
-			else:
+		if not bool(self.motifs):
+			self.selected_motifs = self.motifs
+		else:
+			for motif in self.motifs:
+				g1 = self.g.subgraph(motif)
 				g1 = nx.DiGraph(g1.edges())
-			labels_map = {}
-			for node in motif:
-				label = self.g.nodes[node]['label']#node2label[node]	
 				if self.type == 'undirect':
-					d = g1.degree[node]
-					if label not in labels_map:
-						labels_map[label] = (label, 1, d)
-					else:
-						labels_map[label] = (label, labels_map[label][1] + 1, labels_map[label][2] + d)
+					g1 = nx.Graph(g1.edges())
 				else:
-					in_degree = g1.in_degree(node)
-					out_degree = g1.out_degree(node)
-					if label not in labels_map:
-						labels_map[label] = (label, 1, in_degree, out_degree)
+					g1 = nx.DiGraph(g1.edges())
+				labels_map = {}
+				for node in motif:
+					label = self.g.nodes[node]['label']#node2label[node]	
+					if self.type == 'undirect':
+						d = g1.degree[node]
+						if label not in labels_map:
+							labels_map[label] = (label, 1, d)
+						else:
+							labels_map[label] = (label, labels_map[label][1] + 1, labels_map[label][2] + d)
 					else:
-						labels_map[label] = (label, labels_map[label][1] + 1, labels_map[label][2] + in_degree, labels_map[label][3] + out_degree)
+						in_degree = g1.in_degree(node)
+						out_degree = g1.out_degree(node)
+						if label not in labels_map:
+							labels_map[label] = (label, 1, in_degree, out_degree)
+						else:
+							labels_map[label] = (label, labels_map[label][1] + 1, labels_map[label][2] + in_degree, labels_map[label][3] + out_degree)
 				
-			labels = sorted([v for k, v in labels_map.items()])
+				labels = sorted([v for k, v in labels_map.items()])
 
-			descriptor = ''
-			for l in labels:
-				string_l = '_'.join([str(value) for value in l]) + '_' 
-				descriptor += string_l
-			descriptor = descriptor[:-1]
-			motif2descriptor[motif] = descriptor
-			
-			if descriptor not in self.descriptor2motifs:
-				self.descriptor2motifs[descriptor] = []
-			self.descriptor2motifs[descriptor] += [motif]
+				descriptor = ''
+				for l in labels:
+					string_l = '_'.join([str(value) for value in l]) + '_' 
+					descriptor += string_l
+				descriptor = descriptor[:-1]
+				motif2descriptor[motif] = descriptor
+				
+				if descriptor not in self.descriptor2motifs:
+					self.descriptor2motifs[descriptor] = []
+				self.descriptor2motifs[descriptor] += [motif]
 		#keep only motifs that meet the threshold
-		keys = list(self.descriptor2motifs.keys())
-		for descriptor in keys:
-			if len(self.descriptor2motifs[descriptor]) >= self.th:
-				self.selected_motifs += self.descriptor2motifs[descriptor]
-			else:
-				self.descriptor2motifs.pop(descriptor, None)
-			
-		
+			keys = list(self.descriptor2motifs.keys())
+			for descriptor in keys:
+				if len(self.descriptor2motifs[descriptor]) >= self.th:
+					self.selected_motifs += self.descriptor2motifs[descriptor]
+				else:
+					self.descriptor2motifs.pop(descriptor, None)
 	#This function is used to compute the isomorphism between two undirect graphs.
 	def isomorphism_undirect(self, g1, g2):	
 		matcher = isomorphism.GraphMatcher(g1, g2, node_match = self.__node_equals)	
@@ -75,7 +76,7 @@ class Counter:
 
 	def check_real_isomorphisms(self):
 		iso = {}
-		key_generator = 0     
+		key_generator = 0  
 		for descriptor in self.descriptor2motifs:
 			for motif in self.descriptor2motifs[descriptor]:
 				if type == 'direct':
@@ -100,7 +101,7 @@ class Counter:
 				if not f_iso:
 					iso[descriptor+'_'+str(key_generator)] = [g1]
 					key_generator += 1     
-		self.selected_motifs = dict()
+		self.selected_motifs = dict() 
 		names =  list(self.descriptor2motifs.keys())[0].split('_')    
 		name = names[0]+ '_' + names[1]
 		motifs = ([tuple(x.nodes()) for k,v in iso.items() for x in v if len(v) >= self.th])
@@ -111,5 +112,6 @@ class Counter:
 		
 	def run(self):
 		self.first_count()
-		self.check_real_isomorphisms()
+		if bool(self.selected_motifs):
+			self.check_real_isomorphisms()
 		
