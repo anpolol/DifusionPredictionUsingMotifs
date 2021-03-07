@@ -24,7 +24,7 @@ class Utils:
 					new_motifs[1][k] = motifs2[m]/sum_motif_2
 			return new_motifs[0], new_motifs[1]
 	@staticmethod
-	def find_motifs(g):
+	def find_motifs(g,ms_max):
 			from SuperNoder.manager import Manager as Manager
             
 			arg_tn='undirect'
@@ -36,7 +36,7 @@ class Utils:
 			distributions = {}
 			distributions_disjoint = {}
     
-			for arg_ms in range(3,5):
+			for arg_ms in range(3,ms_max+1):
 				argv=[' ','-g',g[1],'-th',arg_th,'-ms',arg_ms,'-m',arg_m,\
 			'-h1tr',arg_h1tr,'-ss',arg_ss]
 				m = Manager(argv)
@@ -46,7 +46,7 @@ class Utils:
 				distributions_disjoint = dict(list(distributions_disjoint.items()) + list(distribution_disjoint.items()))
 			return  g[0],distributions,distributions_disjoint#первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе	
 	@staticmethod
-	def find_motifs_diff_types(g):
+	def find_motifs_diff_types(g,ms_max):
 		from SuperNoder_diff_types.manager import Manager as Manager_types 
 		arg_tn='undirect'
 		arg_th = '1' 
@@ -55,9 +55,8 @@ class Utils:
 		arg_h1tr = 1 
     
 		distributions = {}
-		distributions_disjoint = {}
-    
-		for arg_ms in range(3,4):
+		distributions_disjoint = {} 
+		for arg_ms in range(3,ms_max+1):
 			argv=[' ','-g',g[1],'-th',arg_th,'-ms',arg_ms,'-m',arg_m,\
       '-h1tr',arg_h1tr,'-ss',arg_ss]
 			m = Manager_types(argv)
