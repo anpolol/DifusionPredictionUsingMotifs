@@ -1,3 +1,7 @@
+import ndlib.models.epidemics as ep
+import ndlib.models.ModelConfig as mc
+import numpy as np
+
 class Utils:
 	@staticmethod
 	def motifs_to_vec(motifs1, motifs2):
@@ -65,4 +69,26 @@ class Utils:
 			distributions = dict(list(distributions.items()) + list(distribution_f1.items()))
 			distributions_disjoint = dict(list(distributions_disjoint.items()) + list(distribution_disjoint.items()))
 		return  g[0],distributions,distributions_disjoint#первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе
-
+	@staticmethod
+	def count(g, beta=0.2, percentage_infected=0.01, estimations=10):
+		len_nodes = len(g.nodes())
+		list_of_iter = []
+    
+		for i in range(estimations):
+			model = ep.SIModel(g)
+			cfg = mc.Configuration()
+			cfg.add_model_parameter('beta', beta)
+			cfg.add_model_parameter("percentage_infected", percentage_infected)
+			model.set_initial_status(cfg)
+    
+			iteration = model.iteration() #initialization
+    
+			while (iteration['node_count'][1]<len_nodes):
+				iteration = model.iteration()
+        
+			list_of_iter.append(iteration['iteration'])
+		return np.mean(list_of_iter)
+	@staticmethod
+	def mean_absolute_percentage_error(y_true, y_pred): 
+		y_true, y_pred = np.array(y_true), np.array(y_pred)
+		return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
