@@ -311,10 +311,6 @@ X_sample_f3_to_save = dict(
 X_sample_f1_to_save = dict(
     map(lambda e: (e[0], dict(map(lambda o: (o[0], o[1][:len(graphs)]), e[1].items()))), X_sample_f1.items()))
 
-with open('motifs_samples_f1.pickle', 'wb') as f:
-    pickle.dump(X_sample_f1_to_save, f)
-with open('motifs_samples_f3.pickle', 'wb') as f:
-    pickle.dump(X_sample_f3_to_save, f)
 with open('motifs_samples_f1_forMSE.pickle', 'wb') as f:
     pickle.dump(X_sample_f1, f)
 with open('motifs_samples_f3_forMSE.pickle', 'wb') as f:
@@ -463,8 +459,8 @@ for n_iter in res:
     y.append(n_iter)
 with open('names_of_all_motifs.pickle', 'rb') as f:
     names_of_all_motifs = pickle.load(f)
-with open('motifs_samples.pickle', 'rb') as f:
-    X_sample_to_save = pickle.load(f)
+
+X_sample_to_save = dict(map(lambda e: (e[0], dict(map(lambda o: (o[0],o[1][:len(graphs)]),e[1].items()))),X_sample.items()))
 
 import shap
 
