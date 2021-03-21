@@ -1,6 +1,8 @@
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import numpy as np
+import os
+import pickle
 
 class Utils:
 	@staticmethod
@@ -39,16 +41,31 @@ class Utils:
     
 			distributions = {}
 			distributions_disjoint = {}
-    
-			for arg_ms in range(3,ms_max+1):
-				argv=[' ','-g',g[1],'-th',arg_th,'-ms',arg_ms,'-m',arg_m,\
-			'-h1tr',arg_h1tr,'-ss',arg_ss]
-				m = Manager(argv)
-				distribution_f1 = m.run()
-				distribution_disjoint = m.disjoint_finder()
+			for arg_ms in range(3, ms_max + 1):
+				argv = [' ', '-g', g[1], '-th', arg_th, '-ms', arg_ms, '-m', arg_m, \
+						'-h1tr', arg_h1tr, '-ss', arg_ss]
+				path1 = './DataHelp/motifs_' +str(g[0])+'_'+str(arg_ms) + 'size.pickle'
+				path2 = './DataHelp/motifs_' +str(g[0])+'_'+ str(arg_ms) + 'size_disjoint.pickle'
+				if os.path.exists(path1) and os.path.exists(path2):
+					with open(path1, 'rb') as f:
+						distribution_f1 = pickle.load(f)
+					with open(path2, 'rb') as f:
+						distribution_disjoint = pickle.load(f)
+				else:
+					m = Manager(argv)
+					distribution_f1 = m.run()
+					distribution_disjoint = m.disjoint_finder()
+					with open(path1, 'wb') as f:
+						pickle.dump(distribution_f1, f)
+					with open(path2, 'wb') as f:
+						pickle.dump(pickle.dump(distribution_f1, f), f)
+
 				distributions = dict(list(distributions.items()) + list(distribution_f1.items()))
-				distributions_disjoint = dict(list(distributions_disjoint.items()) + list(distribution_disjoint.items()))
-			return  g[0],distributions,distributions_disjoint#первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе	
+				distributions_disjoint = dict(
+					list(distributions_disjoint.items()) + list(distribution_disjoint.items()))
+			return g[0], distributions, distributions_disjoint  # первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе
+
+
 	@staticmethod
 	def find_motifs_diff_types(g,ms_max):
 		from SuperNoder_diff_types.manager import Manager as Manager_types 
@@ -63,12 +80,27 @@ class Utils:
 		for arg_ms in range(3,ms_max+1):
 			argv=[' ','-g',g[1],'-th',arg_th,'-ms',arg_ms,'-m',arg_m,\
       '-h1tr',arg_h1tr,'-ss',arg_ss]
-			m = Manager_types(argv)
-			distribution_f1 = m.run()
-			distribution_disjoint = m.disjoint_finder()
+			path1 = './DataHelp/motifs_'+str(g[0])+'_'+str(arg_ms) +'size_diff.pickle'
+			path2 = './DataHelp/motifs_'+str(g[0])+'_'+str(arg_ms) +'size_diff_disjoint.pickle'
+			if os.path.exists(path1) and os.path.exists(path2):
+				with open(path1,'rb') as f:
+					distribution_f1 = pickle.load(f)
+				with open(path2,'rb') as f:
+					distribution_disjoint = pickle.load(f)
+			else:
+				m = Manager_types(argv)
+				distribution_f1 = m.run()
+				distribution_disjoint = m.disjoint_finder()
+				with open(path1,'wb') as f:
+					pickle.dump(distribution_f1,f)
+				with open(path2,'wb') as f:
+					pickle.dump(distribution_disjoint,f)
+
 			distributions = dict(list(distributions.items()) + list(distribution_f1.items()))
 			distributions_disjoint = dict(list(distributions_disjoint.items()) + list(distribution_disjoint.items()))
+
 		return  g[0],distributions,distributions_disjoint#первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе
+
 	@staticmethod
 	def count(g, beta=0.2, percentage_infected=0.01, estimations=10):
 		len_nodes = len(g.nodes())
