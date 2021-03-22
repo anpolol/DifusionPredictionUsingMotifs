@@ -225,10 +225,22 @@ def Motifs(diff_types,graphs,ms_max):
 
     else:
         if os.path.exists('./DataHelp/motifs_of_full_graphs_f3.pickle') and os.path.exists('./DataHelp/motifs_of_full_graphs_f1_diff.pickle'):
-            with open('./DataHelp/motifs_of_full_graphs_f3.pickle','rb') as f:
-                motifs_full_graphs_f3 = pickle.load(f)
             with open('./DataHelp/motifs_of_full_graphs_f1.pickle','rb') as f:
-                motifs_full_graphs_f1 = pickle.load(f)
+                motifs_full_graphs_init = pickle.load(f)
+                motifs_full_graphs_f1 = dict()
+                for dataset in motifs_full_graphs_init:
+                    motifs_full_graphs_f1[dataset] = dict(filter(lambda x: int(x[0].split('_')[1]) <= ms_max,
+                                                                 motifs_full_graphs_init[dataset].items()))
+
+
+            with open('./DataHelp/motifs_of_full_graphs_f3.pickle','rb') as f:
+                motifs_full_graphs_init = pickle.load(f)
+                motifs_full_graphs_f3 = dict()
+                for dataset in motifs_full_graphs_init:
+                    motifs_full_graphs_f3[dataset] = dict(filter(lambda x: int(x[0].split('_')[1]) <= ms_max,
+                                                                 motifs_full_graphs_init[dataset].items()))
+
+
         else:
             with ThreadPoolExecutor(max_workers=4) as executor:
                 res = executor.map(lambda x: find_motif(x, ms_max), graphs)
