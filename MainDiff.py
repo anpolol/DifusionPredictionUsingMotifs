@@ -38,6 +38,7 @@ from modules.support_functions import Utils
 from sklearn.model_selection import train_test_split
 from catboost import CatBoostRegressor
 from modules.Motifs import Motifs
+import shap
 
 
 from littleballoffur import DegreeBasedSampler, \
@@ -75,16 +76,19 @@ methods = [
     LoopErasedRandomWalkSampler,
     RecursiveModularity
 ]
+#global var
+ms_max = 6
+num_workers = 4
+
 # reading graphs from files
 with open('all_graphs.pickle', 'rb') as f:
     graphs = pickle.load(f)
 print(len(graphs))
 
-ms_max = 6
 
 #Собственно, подсчет мотивов
-X_full_f1,X_full_f3,X_sample_f1,X_sample_f3=Motifs(True,graphs,ms_max)
-X_full,X_sample=Motifs(False,graphs,ms_max)
+X_full_f1,X_full_f3,X_sample_f1,X_sample_f3=Motifs(True,graphs,ms_max,num_workers)
+X_full,X_sample=Motifs(False,graphs,ms_max,num_workers)
 #Либо загрузить из файлов
 #with open('motifs_matrix_full_f1.npy', 'rb') as f:
 #    X_full_f1 = np.load(f)
@@ -141,7 +145,7 @@ for method in methods:
     l = 10
     step=10
     inp = zip([method] * int((r - l) / step), list(range(l, r, step)))
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=num_workers) as executor:
         res = executor.map(lambda x: find_MSE(x, X_full, X_full_f1, X_full_f3, X_sample_f1[name_of_method],
                                               X_sample_f3[name_of_method], X_sample[name_of_method]), inp)
 
@@ -228,7 +232,7 @@ plt.show()
 
 print('Regression')
 
-with ThreadPoolExecutor(max_workers=4) as executor:
+with ThreadPoolExecutor(max_workers=num_workers) as executor:
     res = executor.map(Utils.count, list(zip(*graphs))[1])
 
 y = []
@@ -246,7 +250,6 @@ X_sample_f3_to_save = dict(map(lambda e: (e[0], dict(map(lambda o: (o[0], o[1][:
 X_sample_f1_to_save = dict(map(lambda e: (e[0], dict(map(lambda o: (o[0], o[1][:len(graphs)]), e[1].items()))), X_sample_f1.items()))
 
 
-import shap
 
 for method in methods:
     name_of_method = str(method).split('.')[-1].split("'")[0]

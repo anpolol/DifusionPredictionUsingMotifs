@@ -160,7 +160,7 @@ def find_motifs(inp,graphs, ms_max=8, #Только для сэмплирова�
                 motifs_f3[graph[0] + '_' + str(s)] = {}
     return number_of_nodes, motifs_f1, motifs_f3
 
-def find_motifs_method(methods, diff_types,graphs,ms_max):
+def find_motifs_method(methods, diff_types,graphs,ms_max,num_workers):
         for method in methods:
             motifs_methods_f1 = dict()
             motifs_methods_f3 = dict()
@@ -173,7 +173,7 @@ def find_motifs_method(methods, diff_types,graphs,ms_max):
             step = 10
             # here is a parallelization
             inp = list(zip([method] * int((r - l) / step), list(range(l, r, step))))
-            with ThreadPoolExecutor(max_workers=4) as executor:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 res = executor.map(lambda x: find_motifs(x, graphs, ms_max, diff_types), inp)
 
             for number_of_nodes, motifs_f1, motifs_f3 in res:
@@ -189,7 +189,7 @@ def find_motifs_method(methods, diff_types,graphs,ms_max):
         return motifs_methods_f1, motifs_methods_f3
 
 
-def Motifs(diff_types,graphs,ms_max):
+def Motifs(diff_types,graphs,ms_max,num_workers):
     l = 10
     r = 300
     step = 10
@@ -210,7 +210,7 @@ def Motifs(diff_types,graphs,ms_max):
             with open('./DataHelp/motifs_of_full_graphs_f1_diff.pickle','rb') as f:
                 motifs_full_graphs_f1_diff = pickle.load(f)
         else:
-            with ThreadPoolExecutor(max_workers=4) as executor:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 res = executor.map(lambda x: find_motif(x, ms_max), graphs)
             motifs_full_graphs_f1_diff = dict()
             motifs_full_graphs_f3_diff = dict()
@@ -242,7 +242,7 @@ def Motifs(diff_types,graphs,ms_max):
 
 
         else:
-            with ThreadPoolExecutor(max_workers=4) as executor:
+            with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 res = executor.map(lambda x: find_motif(x, ms_max), graphs)
             motifs_full_graphs_f1 = dict()
             motifs_full_graphs_f3 = dict()
@@ -267,6 +267,7 @@ def Motifs(diff_types,graphs,ms_max):
                     for graph in motifs_methods_init[method][number_of_nodes]:
                         for motif in motifs_methods_init[method][number_of_nodes][graph]:
                             name = graph+'_'+str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
+                            arg_ms = str(motif).split('_')[1]
                             path1 = './DataHelp/motifs_' +str(name)+'_'+str(arg_ms) + 'size.pickle'
                             with open(path1, 'wb') as f:
                                 pickle.dump( {motif:  motifs_methods_init[method][number_of_nodes][graph][motif]}, f)
@@ -278,13 +279,14 @@ def Motifs(diff_types,graphs,ms_max):
                     for graph in motifs_methods_init3[method][number_of_nodes]:
                         for motif in motifs_methods_init3[method][number_of_nodes][graph]:
                             name = graph+'_'+str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
+                            arg_ms = str(motif).split('_')[1]
                             path1 = './DataHelp/motifs_' +str(name)+'_'+str(arg_ms) + 'size_disjoint.pickle'
                             with open(path1, 'wb') as f:
                                 pickle.dump( {motif:  motifs_methods_init3[method][number_of_nodes][graph][motif]}, f)
 
-        motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max)
+        motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max,num_workers)
     else:
-        motifs_methods_f1, motifs_methods_f3 = find_motifs_method(methods, True,graphs,ms_max)
+        motifs_methods_f1, motifs_methods_f3 = find_motifs_method(methods, True,graphs,ms_max,num_workers)
 
     # загрузка мотивов для полных графов, на случай чтоб не пересчитывать
 
