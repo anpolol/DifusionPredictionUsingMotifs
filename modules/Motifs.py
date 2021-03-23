@@ -259,32 +259,30 @@ def Motifs(diff_types,graphs,ms_max):
     # получим словарь распределения мотивов для сэмплированных подграфов
 
     if not diff_types:
-        if os.path.exists('./motifs_methods_f1.pickle') and os.path.exists('./motifs_methods_f3.pickle'):
-            with open('./motifs_methods_f1.pickle') as f:
+        if os.path.exists('./DataHelp/motifs_methods_f1.pickle') and os.path.exists('./DataHelp/motifs_methods_f3.pickle'):
+            with open('./DataHelp/motifs_methods_f1.pickle') as f:
                 motifs_methods_init = pickle.load(f)
-                motifs_methods_f1 = dict()
-                for method in motifs_methods_init:
-                    motifs_methods_f1[method] = dict()
-                    for nn in motifs_methods_init[method]:
-                        motifs_methods_f1[method][nn] = dict()
-                        for dataset in motifs_methods_init[method][nn]:
-                            motifs_methods_f1[method][nn][dataset] = dict()
-                            motifs_methods_f1[method][nn][dataset] = dict(filter(lambda x: int(x[0].split('_')[1]) <= ms_max,motifs_methods_init[method][nn][dataset].items()))
+            for method in motifs_methods_init:
+                for number_of_nodes in motifs_methods_init[method]:
+                    for graph in motifs_methods_init[method][number_of_nodes]:
+                        for motif in motifs_methods_init[method][number_of_nodes][graph]:
+                            name = graph+'_'+str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
+                            path1 = './DataHelp/motifs_' +str(name)+'_'+str(arg_ms) + 'size.pickle'
+                            with open(path1, 'wb') as f:
+                                pickle.dump( {motif:  motifs_methods_init[method][number_of_nodes][graph][motif]}, f)
+  
+            with open('./DataHelp/motifs_methods_f3.pickle') as f:
+                motifs_methods_init3 = pickle.load(f)
+            for method in motifs_methods_init3:
+                for number_of_nodes in motifs_methods_init3[method]:
+                    for graph in motifs_methods_init3[method][number_of_nodes]:
+                        for motif in motifs_methods_init3[method][number_of_nodes][graph]:
+                            name = graph+'_'+str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
+                            path1 = './DataHelp/motifs_' +str(name)+'_'+str(arg_ms) + 'size_disjoint.pickle'
+                            with open(path1, 'wb') as f:
+                                pickle.dump( {motif:  motifs_methods_init3[method][number_of_nodes][graph][motif]}, f)
 
-            with open('./motifs_methods_f3.pickle') as f:
-                motifs_methods_init = pickle.load(f)
-                motifs_methods_f3 = dict()
-                for method in motifs_methods_init:
-                    motifs_methods_f3[method] = dict()
-                    for nn in motifs_methods_init[method]:
-                        motifs_methods_f3[method][nn] = dict()
-                        for dataset in motifs_methods_init[method][nn]:
-                            motifs_methods_f3[method][nn][dataset] = dict()
-                            motifs_methods_f3[method][nn][dataset] = dict(
-                                filter(lambda x: int(x[0].split('_')[1]) <= ms_max,
-                                       motifs_methods_init[method][nn][dataset].items()))
-        else:
-            motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max)
+        motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max)
     else:
         motifs_methods_f1, motifs_methods_f3 = find_motifs_method(methods, True,graphs,ms_max)
 

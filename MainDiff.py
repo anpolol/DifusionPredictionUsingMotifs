@@ -78,7 +78,7 @@ methods = [
 # reading graphs from files
 with open('all_graphs.pickle', 'rb') as f:
     graphs = pickle.load(f)
-
+print(len(graphs))
 
 ms_max = 6
 

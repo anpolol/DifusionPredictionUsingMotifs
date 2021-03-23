@@ -12,6 +12,7 @@ class Counter:
 		self.selected_motifs = []
 		self.descriptor2motifs = {}
 		
+    
 	def first_count(self):         
 		motif2descriptor = {}
 		for motif in self.motifs:
@@ -75,6 +76,7 @@ class Counter:
 
 	def check_real_isomorphisms(self):
 		iso = {}
+
 		for descriptor in self.descriptor2motifs:
 			for motif in self.descriptor2motifs[descriptor]:
 				if type == 'direct':
@@ -92,7 +94,7 @@ class Counter:
 					if type == 'direct':
 						f_iso = self.isomorphism_directed(iso[k][0], g1)
 					else:
-						f_iso = self.isomorphism_undirect(iso[k][0], g1)						
+						f_iso = self.isomorphism_undirect(iso[k][0], g1)
 					if f_iso:
 						iso[k] += [g1]
 						break
@@ -102,6 +104,7 @@ class Counter:
 					for node in g1:
 						h.append(g1.degree(node))
 					iso[descriptor+'_'+str(sorted(h))] = [g1]
+					#print(descriptor+'_'+str(sorted(h)),g1.nodes())
 		self.selected_motifs = dict()
 		for key,v in iso.items():
 			if key not in self.selected_motifs:

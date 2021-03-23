@@ -64,8 +64,6 @@ class Counter:
 	def isomorphism_undirect(self, g1, g2):	
 		matcher = isomorphism.GraphMatcher(g1, g2, node_match = self.__node_equals)	
 		return matcher.is_isomorphic()
-		
-
 	#This function is used to compute the isomorphism between two directed graphs
 	def isomorphism_directed(self, g1, g2):
 		matcher = isomorphism.DiGraphMatcher(g1, g2, node_match = self.__node_equals)

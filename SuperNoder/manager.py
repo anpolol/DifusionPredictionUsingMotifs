@@ -136,7 +136,7 @@ class Manager:
 		for motif in self.motifs:
 			if motif not in self.motif2edges:
 				self.motif2edges[motif] = set()
-			for v in itertools.combinations(motif, 2):
+			for v in itertools.combinations_with_replacement(motif, 2):
 				if self.type_of_network == 'direct':
 					if self.g.has_edge(v[0], v[1]):
 						self.motif2edges[motif].add(v)

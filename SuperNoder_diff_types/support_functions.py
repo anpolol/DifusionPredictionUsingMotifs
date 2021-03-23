@@ -75,7 +75,7 @@ class Utils:
 				
 				if neighbors_tmp:
 					neighbors_tmp.pop(0)
-		
+
 		return motifs
 	@staticmethod
 	def extend_motif(vsub, vextension, k, g, realsub):

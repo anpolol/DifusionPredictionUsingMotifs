@@ -130,7 +130,7 @@ class Manager:
 		for motif in self.motifs:
 			if motif not in self.motif2edges:
 				self.motif2edges[motif] = set()
-			for v in itertools.combinations(motif, 2):
+			for v in itertools.combinations_with_replacement(motif, 2):
 				if self.type_of_network == 'direct':
 					if self.g.has_edge(v[0], v[1]):
 						self.motif2edges[motif].add(v)
@@ -139,7 +139,8 @@ class Manager:
 				elif self.type_of_network == 'undirect':
 					if self.g.has_edge(v[0], v[1]):
 						self.motif2edges[motif].add(v)
-		
+
+	
 	def __find_disjoint_motifs(self):
 		self.disjoint_motif_finder = DisjointMotifsFinder(self.g, self.motifs, self.motif2edges, self.sample_size, self.node2motifs, self.h1_times_repetitions)
 		self.disjoint_motif_finder.run(self.method)
@@ -150,12 +151,13 @@ class Manager:
 		self.counter = Counter(self.g, self.motifs, self.th, self.type_of_network, self.motif2edges)
 		self.counter.run()
 		self.motifs = self.counter.get_selected_motifs()
+
 		#print ('#\tThe number of motifs that occur more than', self.th, 'times is', len([x for k,v in self.motifs.items() for x in v]))
 
 	def run(self):
 		self.__manage_input()
 		self.__load_graph()
-		self.__do_enumeration()     
+		self.__do_enumeration()               
 		self.__cut()    
 		self.__compile_node2motifs()
 		distribution_f1 = dict()
