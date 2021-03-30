@@ -16,8 +16,8 @@ from modules.support_functions import Utils
 import pickle
 
 
-def find_motifs(graphs, ms_max=8,  # Только для сэмплирования
-                diff_types=True, inp=10):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
+def find_motifs(graphs, ms_max,  # Только для сэмплирования
+                diff_types, inp):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
     find_motif = Utils.find_motifs_diff_types if diff_types else Utils.find_motifs_all_types
     method, number_of_nodes = inp
 
@@ -112,7 +112,7 @@ def find_motifs_method(methods, diff_types, graphs, ms_max, num_workers, l, r, s
         # here is a parallelization
         inp = list(zip([method] * int((r - l) / step), list(range(l, r, step))))
         with Pool(num_workers) as executor:
-            res = executor.map(partial(find_motifs(graphs=graphs, ms_max=ms_max, diff_types=diff_types)), inp)
+            res = executor.map(partial(find_motifs(graphs, ms_max, diff_types)), inp)
 
         for number_of_nodes, motifs_f1, motifs_f3 in res:
             motifs_methods_f1[name_of_method]['Number of nodes: ' + str(number_of_nodes)] = dict()
