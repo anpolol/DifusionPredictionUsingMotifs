@@ -122,16 +122,19 @@ def find_motifs(inp,graphs, ms_max=8, #Только для сэмплирова�
             else:  # for other methods we should
                 for s in range(10, 20):  # add repeat due to stochastic methods
                     sampler = method(number_of_nodes, seed=s)
-                    sample = sampler.sample(graph[1])
-                    if not sample.nodes[list(sample.nodes)[0]]:  # если первая вершина в списке нулевая.
-                        for node in sample.nodes:
-                            sample.add_node(node, label='Motif')
-                    name = graph[0] + '_' + str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
-                    _, motifs_sample, motifs_disjoint_sample = find_motif((name, sample),
-                                                                          ms_max)
+                    try:
+                        sample = sampler.sample(graph[1])
+                        if not sample.nodes[list(sample.nodes)[0]]:  # если первая вершина в списке нулевая.
+                            for node in sample.nodes:
+                                sample.add_node(node, label='Motif')
+                        name = graph[0] + '_' + str(method).split('.')[-1].split("'")[0]+'_'+str(number_of_nodes)
+                        _, motifs_sample, motifs_disjoint_sample = find_motif((name, sample),
+                                                                              ms_max)
 
-                    motifs_f1[graph[0] + '_' + str(s - 10)] = motifs_sample
-                    motifs_f3[graph[0] + '_' + str(s - 10)] = motifs_disjoint_sample
+                        motifs_f1[graph[0] + '_' + str(s - 10)] = motifs_sample
+                        motifs_f3[graph[0] + '_' + str(s - 10)] = motifs_disjoint_sample
+                    except:
+                        print(method,graph[1])
         else:
             for s in range(10):
                 motifs_f1[graph[0] + '_' + str(s)] = {}
