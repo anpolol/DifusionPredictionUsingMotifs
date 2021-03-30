@@ -78,17 +78,18 @@ methods = [
 ]
 #global var
 ms_max = 6
-num_workers = 4
+num_workers = 30
+l = 10
+r = 30
+step = 10
 
 # reading graphs from files
 with open('all_graphs.pickle', 'rb') as f:
     graphs = pickle.load(f)
-print(len(graphs))
-
 
 #Собственно, подсчет мотивов
-X_full_f1,X_full_f3,X_sample_f1,X_sample_f3=Motifs(True,graphs,ms_max,num_workers)
-X_full,X_sample=Motifs(False,graphs,ms_max,num_workers)
+X_full_f1,X_full_f3,X_sample_f1,X_sample_f3=Motifs(True,graphs,ms_max,num_workers,l,r,step,methods)
+X_full,X_sample=Motifs(False,graphs,ms_max,num_workers,l,r,step,methods)
 #Либо загрузить из файлов
 #with open('motifs_matrix_full_f1.npy', 'rb') as f:
 #    X_full_f1 = np.load(f)
@@ -134,16 +135,14 @@ MSE_methods_f1 = dict()
 MSE_methods_f3 = dict()
 MSE_methods_nodif = dict()
 
-for method in methods:
+for method in methods[2:3]:
     d = datetime.now()
     name_of_method = str(method).split('.')[-1].split("'")[0]
     MSE_methods_f1.setdefault(name_of_method, dict())
     MSE_methods_f3.setdefault(name_of_method, dict())
     MSE_methods_nodif.setdefault(name_of_method, dict())
     # here is a parallelization
-    r = 300
-    l = 10
-    step=10
+
     inp = zip([method] * int((r - l) / step), list(range(l, r, step)))
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         res = executor.map(lambda x: find_MSE(x, X_full, X_full_f1, X_full_f3, X_sample_f1[name_of_method],

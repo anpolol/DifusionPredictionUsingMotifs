@@ -57,28 +57,6 @@ from littleballoffur import DegreeBasedSampler, \
     CommonNeighborAwareRandomWalkSampler, \
     LoopErasedRandomWalkSampler
 
-methods = [
-    # random node sampling
-    DegreeBasedSampler,
-    PageRankBasedSampler,
-
-    # Random Edge Sampling
-    RandomEdgeSampler,
-    SnowBallSampler,
-    CommunityStructureExpansionSampler,
-    ShortestPathSampler,
-    # Random-Walks Dased
-    RandomWalkSampler,
-    RandomWalkWithJumpSampler,
-    MetropolisHastingsRandomWalkSampler,
-    NonBackTrackingRandomWalkSampler,
-    CirculatedNeighborsRandomWalkSampler,
-    CommonNeighborAwareRandomWalkSampler,
-    LoopErasedRandomWalkSampler,
-    RecursiveModularity
-]
-
-
 def find_motifs(inp,graphs, ms_max=8, #Только для сэмплирования
                 diff_types=True):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
     find_motif = Utils.find_motifs_diff_types if diff_types else Utils.find_motifs_all_types
@@ -160,7 +138,7 @@ def find_motifs(inp,graphs, ms_max=8, #Только для сэмплирова�
                 motifs_f3[graph[0] + '_' + str(s)] = {}
     return number_of_nodes, motifs_f1, motifs_f3
 
-def find_motifs_method(methods, diff_types,graphs,ms_max,num_workers):
+def find_motifs_method(methods, diff_types,graphs,ms_max,num_workers,l,r,step):
         for method in methods:
             motifs_methods_f1 = dict()
             motifs_methods_f3 = dict()
@@ -168,9 +146,6 @@ def find_motifs_method(methods, diff_types,graphs,ms_max,num_workers):
             d = datetime.now()
             motifs_methods_f1.setdefault(name_of_method, dict())
             motifs_methods_f3.setdefault(name_of_method, dict())
-            r = 300
-            l = 10
-            step = 10
             # here is a parallelization
             inp = list(zip([method] * int((r - l) / step), list(range(l, r, step))))
             with ThreadPoolExecutor(max_workers=num_workers) as executor:
@@ -189,10 +164,8 @@ def find_motifs_method(methods, diff_types,graphs,ms_max,num_workers):
         return motifs_methods_f1, motifs_methods_f3
 
 
-def Motifs(diff_types,graphs,ms_max,num_workers):
-    l = 10
-    r = 300
-    step = 10
+def Motifs(diff_types,graphs,ms_max,num_workers,l,r,step,methods):
+
     if diff_types:
         print('Counting motifs of different types of initial graphs')
     else:
@@ -284,9 +257,9 @@ def Motifs(diff_types,graphs,ms_max,num_workers):
                             with open(path1, 'wb') as f:
                                 pickle.dump( {motif:  motifs_methods_init3[method][number_of_nodes][graph][motif]}, f)
 
-        motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max,num_workers)
+        motifs_methods_f1,motifs_methods_f3=find_motifs_method(methods,False,graphs,ms_max,num_workers,l,r,step)
     else:
-        motifs_methods_f1, motifs_methods_f3 = find_motifs_method(methods, True,graphs,ms_max,num_workers)
+        motifs_methods_f1, motifs_methods_f3 = find_motifs_method(methods, True,graphs,ms_max,num_workers,l,r,step)
 
     # загрузка мотивов для полных графов, на случай чтоб не пересчитывать
 
