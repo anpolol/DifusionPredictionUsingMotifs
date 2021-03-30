@@ -107,8 +107,8 @@ def find_motifs_method(methods, diff_types, graphs, ms_max, num_workers, l, r, s
         motifs_methods_f3 = dict()
         name_of_method = str(method).split('.')[-1].split("'")[0]
         d = datetime.now()
-        motifs_methods_f1.setdefault(name_of_method, dict())
-        motifs_methods_f3.setdefault(name_of_method, dict())
+        motifs_methods_f1[name_of_method] = dict()
+        motifs_methods_f3[name_of_method] = dict()
         # here is a parallelization
         inp = list(zip([method] * int((r - l) / step), list(range(l, r, step))))
         with Pool(num_workers) as executor:
