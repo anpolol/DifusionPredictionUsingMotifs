@@ -1,0 +1,10 @@
+pandas
+seaborn
+sklearn
+regex
+igraph
+networkx
+catboost
+littleballoffur
+shap
+matplotlib
