@@ -52,7 +52,7 @@ methods = [
 ms_max = 6
 num_workers = 30
 l = 10
-r = 30
+r = 60
 step = 10
 
 # reading graphs from files
