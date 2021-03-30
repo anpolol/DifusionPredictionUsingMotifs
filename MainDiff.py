@@ -174,6 +174,13 @@ def plot(MSE_dict, name_of_method):
     g2 = sns.scatterplot(x=x, y=y)
     g2.set_yscale('log')
 
+with open('./DataHelp/MSE_methods_f1.pickle','wb') as f:
+    pickle.dump(MSE_methods_f1,f)
+with open('./DataHelp/MSE_methods_f3.pickle','wb') as f:
+    pickle.dump(MSE_methods_f3,f)
+with open('./DataHelp/MSE_methods_nodif.pickle', 'wb') as f:
+    pickle.dump(MSE_methods_nodif, f)
+
 
 
 for name in MSE_methods_f1:
