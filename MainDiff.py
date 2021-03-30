@@ -50,7 +50,7 @@ methods = [
 ]
 # global var
 ms_max = 6
-num_workers = 30
+num_workers = 100
 l = 10
 r = 60
 step = 10

@@ -79,7 +79,6 @@ class Utils:
 
         distributions = {}
         distributions_disjoint = {}
-        print(ms_max, g)
         for arg_ms in range(3, ms_max + 1):
             argv = [' ', '-g', g[1], '-th', arg_th, '-ms', arg_ms, '-m', arg_m, \
                     '-h1tr', arg_h1tr, '-ss', arg_ss]
