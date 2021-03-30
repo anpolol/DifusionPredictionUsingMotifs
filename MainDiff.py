@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pickle
 
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 from modules.mse_funcs import find_MSE, plot
 
 from modules.Modularity import RecursiveModularity
@@ -78,7 +78,7 @@ for method in methods:
     # here is a parallelization
 
     inp = zip([method] * int((r - l) / step), list(range(l, r, step)))
-    with ThreadPoolExecutor(max_workers=num_workers) as executor:
+    with Pool(num_workers) as executor:
         res = executor.map(lambda x: find_MSE(x, X_full, X_full_f1, X_full_f3, X_sample_f1[name_of_method],
                                               X_sample_f3[name_of_method], X_sample[name_of_method], graphs=graphs),
                            inp)
@@ -153,7 +153,7 @@ plt.show()
 
 print('Regression')
 
-with ThreadPoolExecutor(max_workers=num_workers) as executor:
+with Pool(num_workers) as executor:
     res = executor.map(Utils.count, list(zip(*graphs))[1])
 
 y = []

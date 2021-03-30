@@ -8,12 +8,9 @@ from itertools import product
 import regex as re
 
 from modules.Modularity import RecursiveModularity
-
 from datetime import datetime
-import warnings
 
-warnings.filterwarnings('ignore')
-from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 
 from modules.support_functions import Utils
 import pickle
@@ -114,7 +111,7 @@ def find_motifs_method(methods, diff_types, graphs, ms_max, num_workers, l, r, s
         motifs_methods_f3.setdefault(name_of_method, dict())
         # here is a parallelization
         inp = list(zip([method] * int((r - l) / step), list(range(l, r, step))))
-        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+        with Pool(num_workers) as executor:
             res = executor.map(lambda x: find_motifs(x, graphs, ms_max, diff_types), inp)
 
         for number_of_nodes, motifs_f1, motifs_f3 in res:
@@ -149,7 +146,7 @@ def Motifs(diff_types, graphs, ms_max, num_workers, l, r, step, methods):
             with open('./DataHelp/motifs_of_full_graphs_f1_diff.pickle', 'rb') as f:
                 motifs_full_graphs_f1_diff = pickle.load(f)
         else:
-            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            with Pool(num_workers) as executor:
                 res = executor.map(lambda x: find_motif(x, ms_max), graphs)
             motifs_full_graphs_f1_diff = dict()
             motifs_full_graphs_f3_diff = dict()
@@ -180,7 +177,7 @@ def Motifs(diff_types, graphs, ms_max, num_workers, l, r, step, methods):
                                                                  motifs_full_graphs_init[dataset].items()))
 
         else:
-            with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            with Pool(num_workers) as executor:
                 res = executor.map(lambda x: find_motif(x, ms_max), graphs)
             motifs_full_graphs_f1 = dict()
             motifs_full_graphs_f3 = dict()
