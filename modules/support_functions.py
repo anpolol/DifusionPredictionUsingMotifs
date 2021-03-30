@@ -30,7 +30,7 @@ class Utils:
 					new_motifs[1][k] = motifs2[m]/sum_motif_2
 			return new_motifs[0], new_motifs[1]
 	@staticmethod
-	def find_motifs_all_types(g,ms_max):
+	def find_motifs_all_types(ms_max, g):
 			from SuperNoder.manager import Manager as Manager
             
 			arg_tn='undirect'
@@ -67,7 +67,7 @@ class Utils:
 
 
 	@staticmethod
-	def find_motifs_diff_types(g,ms_max):
+	def find_motifs_diff_types(ms_max, g):
 		from SuperNoder_diff_types.manager import Manager as Manager_types 
 		arg_tn='undirect'
 		arg_th = '1' 

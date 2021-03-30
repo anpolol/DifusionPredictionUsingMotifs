@@ -3,7 +3,7 @@ from collections import Counter
 import numpy as np
 
 import igraph
-from functools import reduce
+from functools import reduce, partial
 from itertools import product
 import regex as re
 
@@ -147,7 +147,7 @@ def Motifs(diff_types, graphs, ms_max, num_workers, l, r, step, methods):
                 motifs_full_graphs_f1_diff = pickle.load(f)
         else:
             with Pool(num_workers) as executor:
-                res = executor.map(lambda x: find_motif(x, ms_max), graphs)
+                res = executor.map(partial(find_motif(ms_max=ms_max)), graphs)
             motifs_full_graphs_f1_diff = dict()
             motifs_full_graphs_f3_diff = dict()
             for name, motifs, motifs_disjoint in res:
@@ -178,7 +178,7 @@ def Motifs(diff_types, graphs, ms_max, num_workers, l, r, step, methods):
 
         else:
             with Pool(num_workers) as executor:
-                res = executor.map(lambda x: find_motif(x, ms_max), graphs)
+                res = executor.map(partial(find_motif(ms_max=ms_max)), graphs)
             motifs_full_graphs_f1 = dict()
             motifs_full_graphs_f3 = dict()
             for name, motifs, motifs_disjoint in res:

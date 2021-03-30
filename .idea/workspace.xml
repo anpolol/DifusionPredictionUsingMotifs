@@ -21,6 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="112d47c2-4f9b-4d0d-b184-7b12d583b0e3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/modules/Motifs.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/Motifs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/modules/support_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/support_functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
