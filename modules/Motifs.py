@@ -20,7 +20,6 @@ def find_motifs(graphs, ms_max,  # Только для сэмплировани�
                 diff_types, inp):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
     find_motif = Utils.find_motifs_diff_types if diff_types else Utils.find_motifs_all_types
     method, number_of_nodes = inp
-    print('graphs',graphs[0], ms_max, diff_types, inp)
     motifs_f1 = dict()
     motifs_f3 = dict()
     for graph in graphs:
