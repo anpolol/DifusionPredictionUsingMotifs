@@ -16,8 +16,8 @@ from modules.support_functions import Utils
 import pickle
 
 
-def find_motifs(inp, graphs, ms_max=8,  # Только для сэмплирования
-                diff_types=True):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
+def find_motifs(graphs, ms_max=8,  # Только для сэмплирования
+                diff_types=True, inp=10):  # возвращает motifs f1 И f3. Разделение на разные типы мотивов. Размеры мотивов 3 и 4
     find_motif = Utils.find_motifs_diff_types if diff_types else Utils.find_motifs_all_types
     method, number_of_nodes = inp
 
