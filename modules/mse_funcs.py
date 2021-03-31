@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def find_MSE(inp, X, X_f1, X_f3, X_samples_f1, X_samples_f3,
-             X_samples, graphs):  #возвращает MSE для мотивов f1 И f3. Без разделения на разные типы мотивов. Размеры мотивов 3 и 4
+def find_MSE(X, X_f1, X_f3, X_samples_f1, X_samples_f3,
+             X_samples, graphs, inp):  #возвращает MSE для мотивов f1 И f3. Без разделения на разные типы мотивов. Размеры мотивов 3 и 4
     method, number_of_nodes = inp
     MSE_f1 = []
     MSE_f3 = []

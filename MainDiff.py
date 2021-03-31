@@ -79,8 +79,8 @@ for method in methods:
 
     inp = zip([method] * int((r - l) / step), list(range(l, r, step)))
     with Pool(num_workers) as executor:
-        res = executor.map(lambda x: find_MSE(x, X_full, X_full_f1, X_full_f3, X_sample_f1[name_of_method],
-                                              X_sample_f3[name_of_method], X_sample[name_of_method], graphs=graphs),
+        res = executor.map(partial(find_MSE(X_full, X_full_f1, X_full_f3, X_sample_f1[name_of_method],
+                                              X_sample_f3[name_of_method], X_sample[name_of_method], graphs)),
                            inp)
 
     for number_of_nodes, MSE_f1, MSE_f3, MSE_nodif in res:
