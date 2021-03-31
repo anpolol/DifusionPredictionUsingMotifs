@@ -102,9 +102,9 @@ def find_motifs(graphs, ms_max,  # Только для сэмплировани�
 
 
 def find_motifs_method(methods, diff_types, graphs, ms_max, num_workers, l, r, step):
+    motifs_methods_f1 = dict()
+    motifs_methods_f3 = dict()
     for method in methods:
-        motifs_methods_f1 = dict()
-        motifs_methods_f3 = dict()
         name_of_method = str(method).split('.')[-1].split("'")[0]
         d = datetime.now()
         motifs_methods_f1[name_of_method] = dict()
