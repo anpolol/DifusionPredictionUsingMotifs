@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 
 from multiprocessing import Pool
+from functools import partial
 from modules.mse_funcs import find_MSE, plot
 
 from modules.Modularity import RecursiveModularity
