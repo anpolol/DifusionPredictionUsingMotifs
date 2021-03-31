@@ -32,7 +32,7 @@ class Utils:
         return new_motifs[0], new_motifs[1]
 
     @staticmethod
-    def find_motifs_all_types(ms_max, g):
+    def find_motifs_all_types(g, ms_max):
         from SuperNoder.manager import Manager as Manager
 
         arg_tn = 'undirect'
@@ -69,7 +69,7 @@ class Utils:
                    0], distributions, distributions_disjoint  # первое значение словаря - тип мотива или размер мотива, второе значение - количество таких мотивов в графе
 
     @staticmethod
-    def find_motifs_diff_types(g, ms_max):
+    def find_motifs_diff_types(ms_max, g):
         from SuperNoder_diff_types.manager import Manager as Manager_types
         arg_tn = 'undirect'
         arg_th = '1'
