@@ -30,7 +30,7 @@ def find_motifs(graphs, ms_max,  # Только для сэмплировани�
                 graph_i = igraph.Graph.TupleList(sim_tuple, weights=True)
 
                 rm = RecursiveModularity(graph_i, min_modularity=0.1, min_nodes=number_of_nodes,
-                                         modularity_iters=10)
+                                         modularity_iters=500)
                 G_tree = rm.calculate_tree()
                 # finding the index of module with the closest number of nodes to the needed one
                 sg_names = list(rm.node_popualation.keys())  # all indices of all modules
