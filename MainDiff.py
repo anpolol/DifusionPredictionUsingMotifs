@@ -44,8 +44,8 @@ methods = [
     RandomWalkWithJumpSampler,
     MetropolisHastingsRandomWalkSampler,
     NonBackTrackingRandomWalkSampler,
-    CirculatedNeighborsRandomWalkSampler,
-    LoopErasedRandomWalkSampler,
+    #CirculatedNeighborsRandomWalkSampler,
+    #LoopErasedRandomWalkSampler,
     RecursiveModularity
 ]
 # global var

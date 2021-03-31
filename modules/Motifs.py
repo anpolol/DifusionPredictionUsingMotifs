@@ -106,6 +106,7 @@ def find_motifs_method(methods, diff_types, graphs, ms_max, num_workers, l, r, s
     motifs_methods_f3 = dict()
     for method in methods:
         name_of_method = str(method).split('.')[-1].split("'")[0]
+        print(name_of_method)
         d = datetime.now()
         motifs_methods_f1[name_of_method] = dict()
         motifs_methods_f3[name_of_method] = dict()
